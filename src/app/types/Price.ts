@@ -8,7 +8,7 @@ export interface Price {
   lastLowestPrice: number | undefined;
   profitPerItem: number;
   sellFor: number;
-  maxProfit: number;
+  totalProfit: number;
   lastTotalOfferCount: number;
   itemTypes: ItemTypes[];
   buyLimit: number;

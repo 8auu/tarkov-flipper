@@ -1,12 +1,6 @@
-import { api } from "~/trpc/server";
 import { PricesTable } from "./PricesTable";
 
 export default async function Home() {
-  const prices = await api.tarkov.getLatestPrices({
-    limit: 100,
-    traderLevel: 4,
-  });
-
   return (
     <div className="px-2 py-5 text-lg font-semibold xl:container xl:px-0">
       <h1>Latest Tarkov Prices</h1>
@@ -18,7 +12,7 @@ export default async function Home() {
         the count is very low (less than 5), you likely will not make any money
         from the item
       </p>
-      <PricesTable data={prices} />
+      <PricesTable />
     </div>
   );
 }

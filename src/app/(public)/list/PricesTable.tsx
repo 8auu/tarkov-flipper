@@ -13,44 +13,45 @@ import Image from "next/image";
 import { Input } from "~/app/_components/ui/input";
 import {
   Form,
-  FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "~/app/_components/ui/form";
 import { Button } from "~/app/_components/ui/button";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Skeleton } from "~/app/_components/ui/skeleton";
+import { getLatestPricesSchema } from "~/app/schemas/getLatestPricesSchema";
+import { type z } from "zod";
 
-interface Props {
-  data: RouterOutputs["tarkov"]["getLatestPrices"];
-}
+export const PricesTable = () => {
+  const [prices, setPrices] = useState<
+    RouterOutputs["tarkov"]["getLatestPrices"]
+  >([]);
 
-export const PricesTable = ({ data }: Props) => {
-  const [prices, setPrices] =
-    useState<RouterOutputs["tarkov"]["getLatestPrices"]>(data);
-  const formSchema = z.object({
-    traderLevel: z.coerce.number().min(1).max(4),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof getLatestPricesSchema>>({
+    resolver: zodResolver(getLatestPricesSchema),
     defaultValues: {
-      traderLevel: 4,
+      limit: 100,
+      traderLevels: {
+        prapor: 4,
+        therapist: 4,
+        fence: 4,
+        skier: 4,
+        peacekeeper: 4,
+        mechanic: 4,
+        ragman: 4,
+        jaeger: 4,
+      },
     },
   });
 
-  const { refetch, isFetching } = api.tarkov.getLatestPrices.useQuery(
+  const { data, refetch, isFetching } = api.tarkov.getLatestPrices.useQuery(
     {
-      limit: 100,
-      traderLevel: form.getValues("traderLevel"),
+      ...form.getValues(),
     },
-    { enabled: false },
+    { enabled: true },
   );
 
   const handleSubmit = async () => {
@@ -60,6 +61,10 @@ export const PricesTable = ({ data }: Props) => {
     setPrices(response.data);
   };
 
+  useEffect(() => {
+    setPrices(data ?? []);
+  }, [data]);
+
   return (
     <div className="mt-5">
       <Form {...form}>
@@ -67,31 +72,16 @@ export const PricesTable = ({ data }: Props) => {
           onSubmit={form.handleSubmit(handleSubmit)}
           className="w-2/3 space-y-2"
         >
-          <FormField
-            control={form.control}
-            name="traderLevel"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Trader level</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Trader level"
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value, 10))
-                    }
-                  />
-                </FormControl>
-                <FormDescription>
-                  Trader level from 1 to 4. Higher trader levels make more
-                  money.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex gap-5">
+            <TraderCard trader={"prapor"} form={form} />
+            <TraderCard trader={"therapist"} form={form} />
+            <TraderCard trader={"fence"} form={form} />
+            <TraderCard trader={"skier"} form={form} />
+            <TraderCard trader={"peacekeeper"} form={form} />
+            <TraderCard trader={"mechanic"} form={form} />
+            <TraderCard trader={"ragman"} form={form} />
+            <TraderCard trader={"jaeger"} form={form} />
+          </div>
           <Button type="submit" variant={"secondary"}>
             Submit
           </Button>
@@ -103,11 +93,11 @@ export const PricesTable = ({ data }: Props) => {
             <TableHead className="w-[100px]">Trader</TableHead>
             <TableHead>Item</TableHead>
             <TableHead className="text-right">Buy limit</TableHead>
-            <TableHead>Auction price</TableHead>
             <TableHead>Buy price</TableHead>
+            <TableHead>Auction price</TableHead>
             <TableHead className="text-right">Last offer count</TableHead>
             <TableHead>Profit per item</TableHead>
-            <TableHead className="text-right">Max profit</TableHead>
+            <TableHead className="text-right">Total profit (est)</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -177,11 +167,11 @@ export const PricesTable = ({ data }: Props) => {
                     {price.buyLimit.toLocaleString()}
                   </TableCell>
                   <TableCell className="text-right">
-                    {price.sellFor.toLocaleString()}
+                    {price.buyFor.toLocaleString()}
                     <span className="text-xl font-semibold">₽</span>
                   </TableCell>
                   <TableCell className="text-right">
-                    {price.buyFor.toLocaleString()}
+                    {price.sellFor.toLocaleString()}
                     <span className="text-xl font-semibold">₽</span>
                   </TableCell>
                   <TableCell className="text-right">
@@ -192,7 +182,7 @@ export const PricesTable = ({ data }: Props) => {
                     <span className="text-xl font-semibold">₽</span>
                   </TableCell>
                   <TableCell className="text-right">
-                    {price.maxProfit.toLocaleString()}
+                    {price.totalProfit.toLocaleString()}
                     <span className="text-xl font-semibold">₽</span>
                   </TableCell>
                 </TableRow>
@@ -201,6 +191,47 @@ export const PricesTable = ({ data }: Props) => {
           )}
         </TableBody>
       </Table>
+    </div>
+  );
+};
+
+interface TraderCardProps {
+  trader: keyof typeof getLatestPricesSchema._input.traderLevels;
+  form: UseFormReturn<z.infer<typeof getLatestPricesSchema>>;
+}
+
+export const TraderCard = ({ trader, form }: TraderCardProps) => {
+  return (
+    <div className="flex flex-col">
+      <FormField
+        control={form.control}
+        name={`traderLevels.${trader}`}
+        render={({ field }) => (
+          <FormItem>
+            <Image
+              className="rounded-md"
+              src={`/traders/${trader}.webp`}
+              alt={`${trader} profile picture`}
+              width={64}
+              height={64}
+            />
+            <Input
+              type="number"
+              placeholder="Trader level"
+              {...field}
+              value={field.value ?? ""}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (value > 4 || value < 1) return;
+                return field.onChange(parseInt(e.target.value));
+              }}
+              min={1}
+              max={4}
+            />
+            <FormMessage />
+          </FormItem>
+        )}
+      ></FormField>
     </div>
   );
 };

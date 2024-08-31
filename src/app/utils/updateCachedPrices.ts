@@ -43,7 +43,7 @@ export const updatedCachedPrices = async () => {
         lastLowestPrice: item.lastLowPrice,
         profitPerItem: profitPerItem,
         sellFor: sellForFlea.priceRUB,
-        maxProfit: profitPerItem * offer.buyLimit,
+        totalProfit: profitPerItem * offer.buyLimit,
         lastTotalOfferCount: item.lastOfferCount,
         itemTypes: item.types,
         itemImageUrl: item.inspectImageLink,

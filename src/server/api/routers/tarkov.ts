@@ -1,16 +1,12 @@
-import { z } from "zod";
+import { type z } from "zod";
+import { getLatestPricesSchema } from "~/app/schemas/getLatestPricesSchema";
 import { type Price } from "~/app/types/Price";
 import { updatedCachedPrices } from "~/app/utils/updateCachedPrices";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const tarkovRouter = createTRPCRouter({
   getLatestPrices: publicProcedure
-    .input(
-      z.object({
-        limit: z.number().default(100),
-        traderLevel: z.number().min(1).max(4),
-      }),
-    )
+    .input(getLatestPricesSchema)
     .query(async ({ ctx, input }) => {
       const updatedAt = await ctx.redis.get("tarkov:prices:updatedAt");
 
@@ -22,27 +18,24 @@ export const tarkovRouter = createTRPCRouter({
 
         return filterPrices({
           prices: prices,
-          traderLevel: input.traderLevel,
-          limit: input.limit,
+          input,
         });
       }
 
       const prices = await updatedCachedPrices();
       return filterPrices({
         prices: prices,
-        traderLevel: input.traderLevel,
-        limit: input.limit,
+        input,
       });
     }),
 });
 
 interface Props {
   prices: Price[];
-  traderLevel: number;
-  limit: number;
+  input: z.infer<typeof getLatestPricesSchema>;
 }
 
-const filterPrices = ({ prices, traderLevel, limit }: Props) => {
+const filterPrices = ({ prices, input }: Props) => {
   const sortedPrices = prices
     .map((item) => {
       let offerWeight = 1;
@@ -64,15 +57,22 @@ const filterPrices = ({ prices, traderLevel, limit }: Props) => {
       ) {
         offerWeight = 0.8;
       }
-      const weightedProfit = item.maxProfit * offerWeight;
+      const weightedProfit = item.totalProfit * offerWeight;
       return {
         ...item,
         weightedProfit,
       };
     })
     .sort((a, b) => b.weightedProfit - a.weightedProfit)
-    .filter((item) => item.minTraderLevel <= traderLevel)
-    .slice(0, limit);
+    .filter((item) => {
+      return (
+        item.minTraderLevel <=
+        input.traderLevels[
+          item.trader.toLowerCase() as keyof typeof input.traderLevels
+        ]
+      );
+    })
+    .slice(0, input.limit);
 
   return sortedPrices;
 };
