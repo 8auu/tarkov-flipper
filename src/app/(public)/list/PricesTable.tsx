@@ -143,7 +143,7 @@ export const PricesTable = ({ data }: Props) => {
                     <div className="flex flex-col items-center">
                       <Image
                         className="rounded-md"
-                        src={`/traders/${price.trader}.webp`}
+                        src={`/traders/${price.trader.toLowerCase()}.webp`}
                         alt={`${price.trader} profile picture`}
                         width={128}
                         height={128}
