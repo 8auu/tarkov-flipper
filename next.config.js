@@ -10,6 +10,7 @@ const config = {
     domains: ["assets.tarkov.dev"],
     unoptimized: true,
   },
+  staticPageGenerationTimeout: 320,
 };
 
 export default config;
