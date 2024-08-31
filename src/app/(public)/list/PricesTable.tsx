@@ -103,6 +103,8 @@ export const PricesTable = ({ data }: Props) => {
             <TableHead className="w-[100px]">Trader</TableHead>
             <TableHead>Item</TableHead>
             <TableHead className="text-right">Buy limit</TableHead>
+            <TableHead>Auction price</TableHead>
+            <TableHead>Buy price</TableHead>
             <TableHead className="text-right">Last offer count</TableHead>
             <TableHead>Profit per item</TableHead>
             <TableHead className="text-right">Max profit</TableHead>
@@ -113,22 +115,28 @@ export const PricesTable = ({ data }: Props) => {
             <>
               {Array.from({ length: 10 }).map((_, index) => (
                 <TableRow key={index}>
-                  <TableCell className="flex items-center gap-5 font-medium">
+                  <TableCell>
                     <Skeleton className="h-6 w-11/12" />
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-6 w-11/12" />
                   </TableCell>
-                  <TableCell className="text-right">
-                    <Skeleton className="h-6 w-11/12" />
-                  </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell>
                     <Skeleton className="h-6 w-11/12" />
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-6 w-11/12" />
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell>
+                    <Skeleton className="h-6 w-11/12" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-6 w-11/12" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-6 w-11/12" />
+                  </TableCell>
+                  <TableCell>
                     <Skeleton className="h-6 w-11/12" />
                   </TableCell>
                 </TableRow>
@@ -142,7 +150,7 @@ export const PricesTable = ({ data }: Props) => {
                     <h1 className="font-lg">{index + 1}</h1>
                     <div className="flex flex-col items-center">
                       <Image
-                        className="rounded-md"
+                        className="h-12 w-12 rounded-md lg:h-24 lg:w-24"
                         src={`/traders/${price.trader.toLowerCase()}.webp`}
                         alt={`${price.trader} profile picture`}
                         width={128}
@@ -156,7 +164,7 @@ export const PricesTable = ({ data }: Props) => {
                   <TableCell>
                     <div className="flex items-center gap-4">
                       <Image
-                        className="rounded-md"
+                        className="h-12 w-12 rounded-md lg:h-28 lg:w-28"
                         src={`${price.itemImageUrl}`}
                         alt={`${price.trader} profile picture`}
                         width={128}
@@ -167,6 +175,14 @@ export const PricesTable = ({ data }: Props) => {
                   </TableCell>
                   <TableCell className="text-right">
                     {price.buyLimit.toLocaleString()}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {price.sellFor.toLocaleString()}
+                    <span className="text-xl font-semibold">₽</span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {price.buyFor.toLocaleString()}
+                    <span className="text-xl font-semibold">₽</span>
                   </TableCell>
                   <TableCell className="text-right">
                     {price.lastTotalOfferCount.toLocaleString()}
