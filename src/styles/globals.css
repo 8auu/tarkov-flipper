@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --text: 238 64% 9%;
+    --background: 236 25% 89%;
+    --primary: 233 63% 30%;
+    --secondary: 237 40% 66%;
+    --accent: 168 100% 50%;
+    --radius: 0.5rem;
+    --accent: 168 90% 35%;
+    --subtext: 0 0% 41%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+  }
+  .dark {
+    --text: 238 63% 91%;
+    --background: 237 25% 15%;
+    --darkBackground: 236 25% 11%;
+    --primary: 168 90% 35%;
+    --secondary: 236 40% 34%;
+
+    --subtext: 237 11% 75%;
+    --darkAccent: 188 50% 9%;
+    --darkSecondary: 237 11% 7%;
+    --main: 237 25% 15%;
+    --gray: 237 7% 11%;
+    --accent: 168 100% 50%;
+    --lightGray: 237 15% 28%;
+    --active: 194, 100%, 50%, 0.15;
+    --baseActive: 194 100% 50%;
+    --card: 168, 100%, 50%, 0.04;
+    --accentBorder: 168, 100%, 50%, 0.4;
+    --blurple: 235 86% 65%;
+
+    --destructive: 0 62.8% 40.6%;
+    --destructive-foreground: 210 20% 98%;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background;
+  }
+}
+
+#tsparticles {
+  z-index: -1;
+}
+
+html {
+  @apply h-full;
+}
+body {
+  @apply h-full;
+}
+div#__next {
+  @apply h-full;
+}
