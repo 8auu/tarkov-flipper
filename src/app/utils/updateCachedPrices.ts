@@ -73,9 +73,14 @@ export const updatedCachedPrices = async () => {
   await redis.del("tarkov:prices");
 
   console.log(11);
+  const pipeline = redis.pipeline();
+
   for (const price of filteredPrices) {
-    await redis.hset("tarkov:prices", price.id, JSON.stringify(price));
+    pipeline.hset("tarkov:prices", price.id, JSON.stringify(price));
   }
+
+  await pipeline.exec();
+
   console.log(12);
 
   await redis.set("tarkov:prices:updatedAt", Date.now());
