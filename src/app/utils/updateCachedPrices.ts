@@ -5,10 +5,20 @@ import { getFleaPrices } from "./getFleaPrices";
 import { getTraderPrices } from "./getTraderPrices";
 
 export const updatedCachedPrices = async () => {
-  const traderPrices = await getTraderPrices();
-  const fleaPrices = await getFleaPrices({ limit: 100000, offset: 0 });
+  console.log(5);
+  const traderPricesPromise = getTraderPrices();
+  const fleaPricesPromise = getFleaPrices({ limit: 100000, offset: 0 });
+  console.log(6);
+
+  const [traderPrices, fleaPrices] = await Promise.all([
+    traderPricesPromise,
+    fleaPricesPromise,
+  ]);
+  console.log(7);
+
   const prices: Price[] = [];
 
+  console.log(8);
   for (const trader of traderPrices.traders) {
     if (!trader.cashOffers.length) continue;
     for (const offer of trader.cashOffers) {
@@ -47,6 +57,7 @@ export const updatedCachedPrices = async () => {
       });
     }
   }
+  console.log(9);
   const removeDuplicates = (arr: Price[]) => {
     const seen = new Set();
     return arr.filter((item) => {
@@ -58,13 +69,17 @@ export const updatedCachedPrices = async () => {
 
   const filteredPrices = removeDuplicates(prices);
 
+  console.log(10);
   await redis.del("tarkov:prices");
 
+  console.log(11);
   for (const price of filteredPrices) {
     await redis.hset("tarkov:prices", price.id, JSON.stringify(price));
   }
+  console.log(12);
 
   await redis.set("tarkov:prices:updatedAt", Date.now());
+  console.log(13);
 
   return filteredPrices;
 };

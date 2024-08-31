@@ -12,7 +12,9 @@ export const tarkovRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      console.info(1);
       const updatedAt = await ctx.redis.get("tarkov:prices:updatedAt");
+      console.info(2);
 
       if (updatedAt && Date.now() - Number(updatedAt) < 1000 * 60) {
         const rawPrices = await ctx.redis.hgetall("tarkov:prices");
@@ -27,7 +29,9 @@ export const tarkovRouter = createTRPCRouter({
         });
       }
 
+      console.info(3);
       const prices = await updatedCachedPrices();
+      console.info(4);
       return filterPrices({
         prices: prices,
         traderLevel: input.traderLevel,
