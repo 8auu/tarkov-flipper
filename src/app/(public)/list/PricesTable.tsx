@@ -13,8 +13,10 @@ import Image from "next/image";
 import { Input } from "~/app/_components/ui/input";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "~/app/_components/ui/form";
 import { Button } from "~/app/_components/ui/button";
@@ -24,6 +26,7 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "~/app/_components/ui/skeleton";
 import { getLatestPricesSchema } from "~/app/schemas/getLatestPricesSchema";
 import { type z } from "zod";
+import { Label } from "~/app/_components/ui/label";
 
 export const PricesTable = () => {
   const [prices, setPrices] = useState<
@@ -82,8 +85,33 @@ export const PricesTable = () => {
             <TraderCard trader={"ragman"} form={form} />
             <TraderCard trader={"jaeger"} form={form} />
           </div>
+          <FormField
+            control={form.control}
+            name="limit"
+            render={({ field }) => (
+              <FormItem className="grid w-full max-w-sm items-center gap-1.5">
+                <FormLabel>Total results</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Limt"
+                    {...field}
+                    type={"number"}
+                    value={field.value ?? ""}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      if (value > 5000 || value < 1) return;
+                      return field.onChange(parseInt(e.target.value));
+                    }}
+                    min={1}
+                    max={5000}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button type="submit" variant={"secondary"}>
-            Submit
+            Update list
           </Button>
         </form>
       </Form>
