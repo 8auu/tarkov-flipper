@@ -1,8 +1,8 @@
 import { type z } from "zod";
-import { getLatestPricesSchema } from "~/app/schemas/getLatestPricesSchema";
-import { type Price } from "~/app/types/Price";
-import { updatedCachedPrices } from "~/app/utils/updateCachedPrices";
+import { getLatestPricesSchema } from "~/schemas/getLatestPricesSchema";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { type Price } from "~/types/Price";
+import { updatedCachedPrices } from "~/utils/updateCachedPrices";
 
 export const tarkovRouter = createTRPCRouter({
   getLatestPrices: publicProcedure

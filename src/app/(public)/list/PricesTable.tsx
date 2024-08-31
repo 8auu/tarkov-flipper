@@ -1,5 +1,6 @@
 "use client";
 
+import { Clipboard } from "lucide-react";
 import { api, type RouterOutputs } from "~/trpc/react";
 import {
   Table,
@@ -24,11 +25,12 @@ import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { Skeleton } from "~/app/_components/ui/skeleton";
-import { getLatestPricesSchema } from "~/app/schemas/getLatestPricesSchema";
 import { type z } from "zod";
-import { Label } from "~/app/_components/ui/label";
+import { getLatestPricesSchema } from "~/schemas/getLatestPricesSchema";
+import { useToast } from "~/app/_components/ui/use-toast";
 
 export const PricesTable = () => {
+  const { toast } = useToast();
   const [prices, setPrices] = useState<
     RouterOutputs["tarkov"]["getLatestPrices"]
   >([]);
@@ -189,6 +191,16 @@ export const PricesTable = () => {
                         height={128}
                       />
                       <span>{price.name}</span>
+                      <Clipboard
+                        className="cursor-pointer text-gray"
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(price.name);
+                          toast({
+                            title: "Copied to clipboard",
+                            description: price.name,
+                          });
+                        }}
+                      />
                     </div>
                   </TableCell>
                   <TableCell className="text-right">

@@ -4,6 +4,7 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "./_components/theme-providers";
 import { TRPCReactProvider } from "~/trpc/react";
+import { Toaster } from "./_components/ui/toaster";
 
 export default function RootLayout({
   children,
@@ -24,6 +25,7 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
         </TRPCReactProvider>
+        <Toaster />
       </body>
     </html>
   );

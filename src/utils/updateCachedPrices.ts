@@ -1,4 +1,4 @@
-import { redis } from "../redis";
+import { redis } from "~/app/redis";
 import { ItemTypes } from "../types/ItemTypes";
 import { type Price } from "../types/Price";
 import { getFleaPrices } from "./getFleaPrices";
