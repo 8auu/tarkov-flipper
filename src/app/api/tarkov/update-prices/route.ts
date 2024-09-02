@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { redis } from "~/app/redis";
 import { updatedCachedPrices } from "~/utils/updateCachedPrices";
 
+export const maxDuration = 30;
 export const dynamic = "force-dynamic";
 
 export async function GET() {
