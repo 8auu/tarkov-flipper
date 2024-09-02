@@ -2,27 +2,16 @@ import { type z } from "zod";
 import { getLatestPricesSchema } from "~/schemas/getLatestPricesSchema";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { type Price } from "~/types/Price";
-import { updatedCachedPrices } from "~/utils/updateCachedPrices";
 
 export const tarkovRouter = createTRPCRouter({
   getLatestPrices: publicProcedure
     .input(getLatestPricesSchema)
     .query(async ({ ctx, input }) => {
-      const updatedAt = await ctx.redis.get("tarkov:prices:updatedAt");
+      const rawPrices = await ctx.redis.hgetall("tarkov:prices");
+      const prices = Object.values(rawPrices).map(
+        (price) => JSON.parse(price) as Price,
+      );
 
-      if (updatedAt && Date.now() - Number(updatedAt) < 1000 * 60) {
-        const rawPrices = await ctx.redis.hgetall("tarkov:prices");
-        const prices = Object.values(rawPrices).map(
-          (price) => JSON.parse(price) as Price,
-        );
-
-        return filterPrices({
-          prices: prices,
-          input,
-        });
-      }
-
-      const prices = await updatedCachedPrices();
       return filterPrices({
         prices: prices,
         input,
