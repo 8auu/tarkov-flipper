@@ -65,12 +65,17 @@ const filterPrices = ({ prices, input }: Props) => {
       return b.totalProfit - a.totalProfit;
     })
     .filter((item) => {
-      return (
+      const includesType = input.itemTypes.some((type) =>
+        item.itemTypes.includes(type),
+      );
+
+      const traderLevelCondition =
         item.minTraderLevel <=
         input.traderLevels[
           item.trader.toLowerCase() as keyof typeof input.traderLevels
-        ]
-      );
+        ];
+
+      return includesType && traderLevelCondition;
     })
     .slice(0, input.limit);
 

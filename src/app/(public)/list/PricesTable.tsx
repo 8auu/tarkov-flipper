@@ -35,6 +35,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "~/app/_components/ui/tooltip";
+import { MultiSelect } from "~/app/_components/ui/multi-select";
+import { ItemTypes } from "~/types/ItemTypes";
 
 export const PricesTable = () => {
   const { toast } = useToast();
@@ -48,6 +50,12 @@ export const PricesTable = () => {
       smartFilter: true,
       limit: 100,
       minimumLastOfferCount: 5,
+      itemTypes: Object.values(ItemTypes)
+        .map((item) => {
+          if (item === ItemTypes.GUN || item === ItemTypes.PRESET) return null;
+          return item;
+        })
+        .filter((item) => item !== null),
       traderLevels: {
         prapor: 4,
         therapist: 4,
@@ -84,7 +92,7 @@ export const PricesTable = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="my-2 w-2/3 space-y-2"
+          className="my-2 space-y-2"
         >
           <div className="flex gap-5">
             <TraderCard trader={"prapor"} form={form} />
@@ -101,7 +109,7 @@ export const PricesTable = () => {
               control={form.control}
               name="smartFilter"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="rounded-md border p-2">
                   <div>
                     <FormLabel>Smart filter</FormLabel>
                     <FormDescription>
@@ -125,7 +133,7 @@ export const PricesTable = () => {
               control={form.control}
               name="minimumLastOfferCount"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="rounded-md border p-2">
                   <div>
                     <FormLabel>Minimum last offer count</FormLabel>
                     <FormDescription>
@@ -171,7 +179,7 @@ export const PricesTable = () => {
               control={form.control}
               name="limit"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="rounded-md border p-2">
                   <div>
                     <FormLabel>Total results</FormLabel>
                     <FormDescription>
@@ -191,6 +199,43 @@ export const PricesTable = () => {
                       }}
                       min={1}
                       max={5000}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="limit"
+              render={({ field }) => (
+                <FormItem className="rounded-md border p-2">
+                  <div>
+                    <FormLabel>Item types</FormLabel>
+                    <FormDescription>
+                      Only show specific item types, eg ammo, rigs, etc.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <MultiSelect
+                      options={Object.values(ItemTypes)
+                        .map((item) => {
+                          if (
+                            item === ItemTypes.GUN ||
+                            item === ItemTypes.PRESET
+                          )
+                            return null;
+                          return { label: item, value: item };
+                        })
+                        .filter((item) => item !== null)}
+                      defaultValue={form.getValues("itemTypes")}
+                      onValueChange={(value) => {
+                        form.setValue("itemTypes", value as ItemTypes[]);
+                      }}
+                      placeholder="Item types"
+                      variant="inverted"
+                      animation={2}
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -250,71 +295,74 @@ export const PricesTable = () => {
             </>
           ) : (
             <>
-              {prices.map((price, index) => (
-                <TableRow key={price.id}>
-                  <TableCell className="flex items-center gap-5 font-medium">
-                    <h1 className="font-lg">{index + 1}</h1>
-                    <div className="flex flex-col items-center">
-                      <Image
-                        className="h-12 w-12 rounded-md lg:h-24 lg:w-24"
-                        src={`/traders/${price.trader.toLowerCase()}.webp`}
-                        alt={`${price.trader} profile picture`}
-                        width={128}
-                        height={128}
-                      />
-                      <span>
-                        {price.trader} {price.minTraderLevel}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-4">
+              {prices.map((price, index) => {
+                if (price.totalProfit <= 0) return null;
+                return (
+                  <TableRow key={price.id}>
+                    <TableCell className="flex items-center gap-5 font-medium">
+                      <h1 className="font-lg">{index + 1}</h1>
+                      <div className="flex flex-col items-center">
                         <Image
-                          className="h-12 w-12 rounded-md lg:h-28 lg:w-28"
-                          src={`${price.itemImageUrl}`}
+                          className="h-12 w-12 rounded-md lg:h-24 lg:w-24"
+                          src={`/traders/${price.trader.toLowerCase()}.webp`}
                           alt={`${price.trader} profile picture`}
                           width={128}
                           height={128}
                         />
-                        <span>{price.name}</span>
+                        <span>
+                          {price.trader} {price.minTraderLevel}
+                        </span>
                       </div>
-                      <Clipboard
-                        className="cursor-pointer text-gray"
-                        onClick={async () => {
-                          await navigator.clipboard.writeText(price.name);
-                          toast({
-                            title: "Copied to clipboard",
-                            description: price.name,
-                          });
-                        }}
-                      />
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {price.buyLimit.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {price.buyFor.toLocaleString()}
-                    <span className="text-xl font-semibold">₽</span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {price.sellFor.toLocaleString()}
-                    <span className="text-xl font-semibold">₽</span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {price.lastTotalOfferCount.toLocaleString()}
-                  </TableCell>
-                  <TableCell>
-                    {price.profitPerItem.toLocaleString()}
-                    <span className="text-xl font-semibold">₽</span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {price.totalProfit.toLocaleString()}
-                    <span className="text-xl font-semibold">₽</span>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                          <Image
+                            className="h-12 w-12 rounded-md lg:h-28 lg:w-28"
+                            src={`${price.itemImageUrl}`}
+                            alt={`${price.trader} profile picture`}
+                            width={128}
+                            height={128}
+                          />
+                          <span>{price.name}</span>
+                        </div>
+                        <Clipboard
+                          className="cursor-pointer text-gray"
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(price.name);
+                            toast({
+                              title: "Copied to clipboard",
+                              description: price.name,
+                            });
+                          }}
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {price.buyLimit.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {price.buyFor.toLocaleString()}
+                      <span className="text-xl font-semibold">₽</span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {price.sellFor.toLocaleString()}
+                      <span className="text-xl font-semibold">₽</span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {price.lastTotalOfferCount.toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      {price.profitPerItem.toLocaleString()}
+                      <span className="text-xl font-semibold">₽</span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {price.totalProfit.toLocaleString()}
+                      <span className="text-xl font-semibold">₽</span>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </>
           )}
         </TableBody>

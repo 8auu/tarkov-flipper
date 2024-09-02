@@ -1,8 +1,10 @@
 import { z } from "zod";
+import { ItemTypes } from "~/types/ItemTypes";
 
 export const getLatestPricesSchema = z.object({
   smartFilter: z.boolean().default(true),
   limit: z.number().default(100),
+  itemTypes: z.array(z.nativeEnum(ItemTypes)),
   minimumLastOfferCount: z.number().default(5),
   traderLevels: z.object({
     prapor: z.number().min(1).max(4).default(4),

@@ -22,8 +22,8 @@ export const updatedCachedPrices = async () => {
       if (!item) continue;
       if (!item.avg24hPrice) continue;
       if (
-        offer.item.types.includes(ItemTypes.gun) ||
-        offer.item.types.includes(ItemTypes.preset)
+        offer.item.types.includes(ItemTypes.GUN) ||
+        offer.item.types.includes(ItemTypes.PRESET)
       )
         continue;
 
