@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { redis } from "~/app/redis";
 import { updatedCachedPrices } from "~/utils/updateCachedPrices";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const updatedAt = await redis.get("tarkov:prices:updatedAt");
 
