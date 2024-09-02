@@ -15,6 +15,7 @@ import { Input } from "~/app/_components/ui/input";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -28,6 +29,12 @@ import { Skeleton } from "~/app/_components/ui/skeleton";
 import { type z } from "zod";
 import { getLatestPricesSchema } from "~/schemas/getLatestPricesSchema";
 import { useToast } from "~/app/_components/ui/use-toast";
+import { Switch } from "~/app/_components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "~/app/_components/ui/tooltip";
 
 export const PricesTable = () => {
   const { toast } = useToast();
@@ -38,7 +45,9 @@ export const PricesTable = () => {
   const form = useForm<z.infer<typeof getLatestPricesSchema>>({
     resolver: zodResolver(getLatestPricesSchema),
     defaultValues: {
+      smartFilter: true,
       limit: 100,
+      minimumLastOfferCount: 5,
       traderLevels: {
         prapor: 4,
         therapist: 4,
@@ -71,11 +80,11 @@ export const PricesTable = () => {
   }, [data]);
 
   return (
-    <div className="mt-5">
+    <div className="mb-5">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="w-2/3 space-y-2"
+          className="my-2 w-2/3 space-y-2"
         >
           <div className="flex gap-5">
             <TraderCard trader={"prapor"} form={form} />
@@ -87,31 +96,108 @@ export const PricesTable = () => {
             <TraderCard trader={"ragman"} form={form} />
             <TraderCard trader={"jaeger"} form={form} />
           </div>
-          <FormField
-            control={form.control}
-            name="limit"
-            render={({ field }) => (
-              <FormItem className="grid w-full max-w-sm items-center gap-1.5">
-                <FormLabel>Total results</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Limt"
-                    {...field}
-                    type={"number"}
-                    value={field.value ?? ""}
-                    onChange={(e) => {
-                      const value = parseInt(e.target.value);
-                      if (value > 5000 || value < 1) return;
-                      return field.onChange(parseInt(e.target.value));
-                    }}
-                    min={1}
-                    max={5000}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-2 gap-5">
+            <FormField
+              control={form.control}
+              name="smartFilter"
+              render={({ field }) => (
+                <FormItem>
+                  <div>
+                    <FormLabel>Smart filter</FormLabel>
+                    <FormDescription>
+                      Prioritise items which will sell faster whilst still
+                      having a high total profit. Disabling this option may
+                      result in items with a very high profit, which will likely
+                      never sell.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="minimumLastOfferCount"
+              render={({ field }) => (
+                <FormItem>
+                  <div>
+                    <FormLabel>Minimum last offer count</FormLabel>
+                    <FormDescription>
+                      The minimum amount of offers that have been made in the
+                      last 24 hours. This is used to filter out prices which are
+                      not likely to sell due to low demand.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <Input
+                          disabled={form.getValues().smartFilter}
+                          placeholder="Minimum last offer"
+                          {...field}
+                          type={"number"}
+                          value={field.value ?? ""}
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value);
+                            if (value > 5000 || value < 1) return;
+                            return field.onChange(parseInt(e.target.value));
+                          }}
+                          min={1}
+                          max={5000}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-destructive"
+                        disabled={!form.getValues("smartFilter")}
+                      >
+                        <p>
+                          You must disable the smart filter before configuring
+                          this option
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="limit"
+              render={({ field }) => (
+                <FormItem>
+                  <div>
+                    <FormLabel>Total results</FormLabel>
+                    <FormDescription>
+                      The amount of items to display in the table.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Input
+                      placeholder="limit"
+                      {...field}
+                      type={"number"}
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        if (value > 5000 || value < 1) return;
+                        return field.onChange(parseInt(e.target.value));
+                      }}
+                      min={1}
+                      max={5000}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <Button type="submit" variant={"secondary"}>
             Update list
           </Button>
@@ -182,15 +268,17 @@ export const PricesTable = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-4">
-                      <Image
-                        className="h-12 w-12 rounded-md lg:h-28 lg:w-28"
-                        src={`${price.itemImageUrl}`}
-                        alt={`${price.trader} profile picture`}
-                        width={128}
-                        height={128}
-                      />
-                      <span>{price.name}</span>
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <Image
+                          className="h-12 w-12 rounded-md lg:h-28 lg:w-28"
+                          src={`${price.itemImageUrl}`}
+                          alt={`${price.trader} profile picture`}
+                          width={128}
+                          height={128}
+                        />
+                        <span>{price.name}</span>
+                      </div>
                       <Clipboard
                         className="cursor-pointer text-gray"
                         onClick={async () => {

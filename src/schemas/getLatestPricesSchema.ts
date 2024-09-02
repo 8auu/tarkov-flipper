@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 export const getLatestPricesSchema = z.object({
+  smartFilter: z.boolean().default(true),
   limit: z.number().default(100),
+  minimumLastOfferCount: z.number().default(5),
   traderLevels: z.object({
     prapor: z.number().min(1).max(4).default(4),
     therapist: z.number().min(1).max(4).default(4),

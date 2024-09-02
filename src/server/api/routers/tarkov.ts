@@ -37,6 +37,12 @@ interface Props {
 
 const filterPrices = ({ prices, input }: Props) => {
   const sortedPrices = prices
+    .filter((item) => {
+      if (input.minimumLastOfferCount !== undefined) {
+        return item.lastTotalOfferCount >= input.minimumLastOfferCount;
+      }
+      return true;
+    })
     .map((item) => {
       let offerWeight = 1;
       if (item.lastTotalOfferCount >= 1 && item.lastTotalOfferCount <= 5) {
@@ -63,7 +69,12 @@ const filterPrices = ({ prices, input }: Props) => {
         weightedProfit,
       };
     })
-    .sort((a, b) => b.weightedProfit - a.weightedProfit)
+    .sort((a, b) => {
+      if (input.smartFilter) {
+        return b.weightedProfit - a.weightedProfit;
+      }
+      return b.totalProfit - a.totalProfit;
+    })
     .filter((item) => {
       return (
         item.minTraderLevel <=

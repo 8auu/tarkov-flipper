@@ -5,6 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "./_components/theme-providers";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Toaster } from "./_components/ui/toaster";
+import { TooltipProvider } from "./_components/ui/tooltip";
 
 export default function RootLayout({
   children,
@@ -22,7 +23,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <TooltipProvider>{children}</TooltipProvider>
           </ThemeProvider>
         </TRPCReactProvider>
         <Toaster />
