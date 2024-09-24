@@ -15,7 +15,10 @@ export const updatedCachedPrices = async () => {
 
   const prices: Price[] = [];
 
+  console.log(traderPrices.traders);
+
   for (const trader of traderPrices.traders) {
+    if (!traderPrices) return;
     if (!trader.cashOffers.length) continue;
     for (const offer of trader.cashOffers) {
       const item = fleaPrices.find((fleaItem) => fleaItem.id === offer.item.id);
