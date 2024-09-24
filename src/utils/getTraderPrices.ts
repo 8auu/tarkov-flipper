@@ -49,8 +49,8 @@ export const getTraderPrices = async (): Promise<TradersResponse> => {
 
   console.log(response.status, response.statusText);
 
-  const data = (await response.json()) as { data: TradersResponse };
-  console.log(data);
+  const data = await response.json();
+  console.log(JSON.stringify(data.errors));
 
   return data.data;
 };
