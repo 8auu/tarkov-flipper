@@ -13,7 +13,7 @@ export type Item = {
   historicalPrices: {
     timestamp: string;
     price: number;
-  };
+  }[];
   sellFor: {
     currency: Currencies;
     priceRUB: number;
