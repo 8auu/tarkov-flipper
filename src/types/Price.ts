@@ -15,4 +15,8 @@ export interface Price {
   itemImageUrl: string;
   minTraderLevel: number;
   buyFor: number;
+  historicalPrices: {
+    timestamp: string;
+    price: number;
+  }[];
 }

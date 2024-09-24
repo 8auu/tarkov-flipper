@@ -11,24 +11,28 @@ export const getFleaPrices = async ({
 }: Props): Promise<Item[]> => {
   const query = `
     {
-      items(limit: ${limit}, offset: ${offset}) {
-        id
-        name
-        types
-        basePrice
-        lastLowPrice
-        avg24hPrice
-        lastOfferCount
-        inspectImageLink
-        sellFor {
-          currency
-          priceRUB
-          vendor {
-            name
-          }
+    items(limit: ${limit}, offset: ${offset}) {
+      id
+      name
+      types
+      basePrice
+      lastLowPrice
+      avg24hPrice
+      lastOfferCount
+      inspectImageLink
+      sellFor {
+        currency
+        priceRUB
+        vendor {
+          name
         }
       }
+      historicalPrices {
+        timestamp
+        price
+      }
     }
+  }
     `;
 
   const response = await fetch("https://api.tarkov.dev/graphql", {

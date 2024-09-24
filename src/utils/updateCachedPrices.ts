@@ -50,6 +50,7 @@ export const updatedCachedPrices = async () => {
         buyLimit: offer.buyLimit,
         minTraderLevel: offer.minTraderLevel,
         buyFor: offer.price,
+        historicalPrices: item.historicalPrices,
       });
     }
   }

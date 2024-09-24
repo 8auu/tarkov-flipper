@@ -10,6 +10,10 @@ export type Item = {
   lastOfferCount: number;
   types: ItemTypes[];
   inspectImageLink: string;
+  historicalPrices: {
+    timestamp: string;
+    price: number;
+  };
   sellFor: {
     currency: Currencies;
     priceRUB: number;
