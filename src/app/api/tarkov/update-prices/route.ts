@@ -13,7 +13,7 @@ export async function GET() {
     return NextResponse.json({ message: "Already updated" }, { status: 200 });
   }
 
-  await updatedCachedPrices();
+  const data = await updatedCachedPrices();
 
-  return NextResponse.json({ message: "Updated list" }, { status: 200 });
+  return NextResponse.json(data, { status: 200 });
 }
