@@ -23,7 +23,7 @@ export async function GET() {
               currency
               priceRUB
               vendor {
-                normalizedName
+                name
               }
             }
           }
