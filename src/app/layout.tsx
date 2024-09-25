@@ -7,6 +7,7 @@ import { ThemeProvider } from "./_components/theme-providers";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Toaster } from "./_components/ui/toaster";
 import { TooltipProvider } from "./_components/ui/tooltip";
+import { Navbar } from "./_components/navbar/Navbar";
 
 export default function RootLayout({
   children,
@@ -25,7 +26,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TooltipProvider>{children}</TooltipProvider>
+            <TooltipProvider>
+              <div className="px-2 py-5 text-lg font-semibold xl:container xl:px-0">
+                <Navbar />
+                {children}
+              </div>
+            </TooltipProvider>
           </ThemeProvider>
         </TRPCReactProvider>
         <Toaster />

@@ -9,6 +9,7 @@ export type Item = {
   avg24hPrice?: number; // avg24hPrice might be undefined if not available
   lastOfferCount: number;
   types: ItemTypes[];
+  updated: string;
   inspectImageLink: string;
   historicalPrices: {
     timestamp: string;

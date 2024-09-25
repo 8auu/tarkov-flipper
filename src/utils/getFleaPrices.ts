@@ -20,6 +20,7 @@ export const getFleaPrices = async ({
       avg24hPrice
       lastOfferCount
       inspectImageLink
+      updated
       sellFor {
         currency
         priceRUB

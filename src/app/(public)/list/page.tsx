@@ -1,11 +1,9 @@
-import { Navbar } from "~/app/_components/navbar/Navbar";
 import { PricesTable } from "./PricesTable";
 
-export default async function Home() {
+export default async function Trader() {
   return (
     <>
-      <div className="px-2 py-5 text-lg font-semibold xl:container xl:px-0">
-        <Navbar />
+      <div>
         <h1>Latest Tarkov Prices</h1>
         <p className="text-sm text-gray">
           Prices can be slightly, they are updated every 5minutes. Currently it

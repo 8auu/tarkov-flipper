@@ -39,6 +39,8 @@ import { MultiSelect } from "~/app/_components/ui/multi-select";
 import { ItemTypes } from "~/types/ItemTypes";
 import { type Price } from "~/types/Price";
 import { HistoricalPricesDialog } from "~/app/_components/dialogs/historicalPrices/HistoricalPricesDialog";
+import { Badge } from "~/app/_components/ui/badge";
+import { format } from "timeago.js";
 
 export const PricesTable = () => {
   const { toast } = useToast();
@@ -326,6 +328,9 @@ export const PricesTable = () => {
                           <span>
                             {price.trader} {price.minTraderLevel}
                           </span>
+                          <Badge variant="secondary">
+                            Updated {format(new Date(price.updated))}
+                          </Badge>
                         </div>
                       </TableCell>
                       <TableCell>
