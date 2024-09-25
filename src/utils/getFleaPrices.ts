@@ -50,7 +50,11 @@ export const getFleaPrices = async ({
     );
   }
 
-  const data = (await response.json()) as { data: { items: Item[] } };
+  const data = await response.json();
+
+  console.log("FLEA", response.status, response.statusText);
+  console.log("FLEA", JSON.stringify(data.errors, null, 2));
+  console.log("FLEA", data);
 
   return data.data.items;
 };
