@@ -10,6 +10,16 @@ export async function GET() {
         name
         cashOffers {
           buyLimit
+          item {
+            id
+            name
+            types
+            basePrice
+            lastLowPrice
+            avg24hPrice
+            lastOfferCount
+            inspectImageLink
+          }
           currency
           price
           minTraderLevel
