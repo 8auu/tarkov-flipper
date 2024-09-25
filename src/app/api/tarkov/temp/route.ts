@@ -19,6 +19,13 @@ export async function GET() {
             avg24hPrice
             lastOfferCount
             inspectImageLink
+            sellFor {
+              currency
+              priceRUB
+              vendor {
+                name
+              }
+            }
           }
           currency
           price
