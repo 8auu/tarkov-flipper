@@ -8,33 +8,40 @@ export async function GET() {
     {
       traders {
         name
-        cashOffers {
-          buyLimit
-          item {
-            id
-            name
-            types
-            basePrice
-            lastLowPrice
-            avg24hPrice
-            lastOfferCount
-            inspectImageLink
-            sellFor {
-              currency
-              priceRUB
-              vendor {
-                name
-              }
-            }
-          }
-          currency
-          price
-          minTraderLevel
-          buyLimit
-        }
       }
     }
   `;
+  // const query = `
+  //   {
+  //     traders {
+  //       name
+  //       cashOffers {
+  //         buyLimit
+  //         item {
+  //           id
+  //           name
+  //           types
+  //           basePrice
+  //           lastLowPrice
+  //           avg24hPrice
+  //           lastOfferCount
+  //           inspectImageLink
+  //           sellFor {
+  //             currency
+  //             priceRUB
+  //             vendor {
+  //               name
+  //             }
+  //           }
+  //         }
+  //         currency
+  //         price
+  //         minTraderLevel
+  //         buyLimit
+  //       }
+  //     }
+  //   }
+  // `;
 
   const response = await fetch("https://api.tarkov.dev/graphql", {
     method: "POST",
