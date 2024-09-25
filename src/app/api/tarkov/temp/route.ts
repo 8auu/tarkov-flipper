@@ -8,6 +8,13 @@ export async function GET() {
     {
       traders {
         name
+        cashOffers {
+          buyLimit
+          currency
+          price
+          minTraderLevel
+          buyLimit
+        }
       }
     }
   `;
