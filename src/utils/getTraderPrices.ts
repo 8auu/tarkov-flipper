@@ -20,7 +20,7 @@ export const getTraderPrices = async (): Promise<TradersResponse> => {
               currency
               priceRUB
               vendor {
-                name
+                normalizedName
               }
             }
           }

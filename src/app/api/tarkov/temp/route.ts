@@ -22,6 +22,9 @@ export async function GET() {
             sellFor {
               currency
               priceRUB
+              vendor {
+                name
+              }
             }
           }
           currency
