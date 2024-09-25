@@ -23,7 +23,7 @@ export async function GET() {
               currency
               priceRUB
               vendor {
-                name
+                normalizedName
               }
             }
           }
@@ -35,37 +35,6 @@ export async function GET() {
       }
     }
   `;
-  // const query = `
-  //   {
-  //     traders {
-  //       name
-  //       cashOffers {
-  //         buyLimit
-  //         item {
-  //           id
-  //           name
-  //           types
-  //           basePrice
-  //           lastLowPrice
-  //           avg24hPrice
-  //           lastOfferCount
-  //           inspectImageLink
-  //           sellFor {
-  //             currency
-  //             priceRUB
-  //             vendor {
-  //               name
-  //             }
-  //           }
-  //         }
-  //         currency
-  //         price
-  //         minTraderLevel
-  //         buyLimit
-  //       }
-  //     }
-  //   }
-  // `;
 
   const response = await fetch("https://api.tarkov.dev/graphql", {
     method: "POST",
@@ -82,8 +51,8 @@ export async function GET() {
   }
 
   const data = await response.json();
-  console.log("TRADER1", response.status, response.statusText);
-  console.log("TRADER1", JSON.stringify(data.errors, null, 2));
-  console.log("TRADER1", data);
+  console.log("TRADER", response.status, response.statusText);
+  console.log("TRADER", JSON.stringify(data.errors, null, 2));
+  console.log("TRADER", data);
   return NextResponse.json(data, { status: 200 });
 }
